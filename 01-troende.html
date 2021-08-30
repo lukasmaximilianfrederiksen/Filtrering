@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      img {
+        max-width: 200px;
+      }
+
+      section {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      }
+      article {
+        border: solid black 1px;
+        margin-left: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="personContainer">
+      <template>
+        <article class="personListe">
+          <h2></h2>
+          <img src="" alt="" class="billedePerson" />
+          <p class="personNavn"></p>
+          <p class="personEfternavn"></p>
+          <p class="fødselsdag"></p>
+          <p class="titel"></p>
+          <p class="religion"></p>
+          <p class="hobby"></p>
+        </article>
+      </template>
+    </section>
+
+    <script>
+      const url = "https://persongalleri-5d3e.restdb.io/rest/persongalleri";
+
+      const options = {
+        headers: {
+          "x-apikey": "600fe9211346a1524ff12e31",
+        },
+      };
+
+      document.addEventListener("DOMContentLoaded", start);
+      let personer;
+      let filter = "ja";
+
+      function start() {
+        hentData();
+      }
+      // Henter JSON filer
+      async function hentData() {
+        const respons = await fetch(url, options);
+        const json = await respons.json();
+        vis(json);
+      }
+
+      let template = document.querySelector("template");
+      const liste = document.querySelector("template");
+      let article = document.querySelector("article");
+
+      function vis(json) {
+        console.log(json);
+        json.forEach((person) => {
+          const klon = template.cloneNode(true).content;
+          if (filter == person.troende) {
+            klon.querySelector("img").src = "./billeder-json/" + person.billede;
+            klon.querySelector("h2").textContent =
+              person.fornavn + " " + person.efternavn;
+            // klon.querySelector(".personEfternavn").textContent = person.efternavn;
+            //   klon.querySelector(".fødselsdag").textContent = person.fødselsdag;
+            klon.querySelector(".religion").textContent =
+              "Troende: " + person.troende;
+            //   klon.querySelector(".titel").textContent = person.titel;
+            //   klon.querySelector(".hobby").textContent = person.hobby;
+            const main = document.querySelector(".personContainer");
+            main.appendChild(klon);
+          }
+        });
+      }
+
+      hentData();
+    </script>
+  </body>
+</html>
